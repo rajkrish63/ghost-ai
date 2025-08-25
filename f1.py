@@ -1,0 +1,31 @@
+from flask import Flask, request, jsonify, send_from_directory
+import google.generativeai as genai
+from flask_cors import CORS
+import os
+
+app = Flask(__name__, static_folder=".", static_url_path="")
+CORS(app)  # allow frontend JS to call backend
+
+# Configure Gemini
+API_KEY = "AIzaSyBXyMLeOdakUY_epOBJd4Bc1eyEpKQwHYo"   # ⚠️ replace with your Gemini API key
+genai.configure(api_key=API_KEY)
+model = genai.GenerativeModel("gemini-2.0-flash")
+chat = model.start_chat()
+
+@app.route("/")
+def index():
+    return send_from_directory(".", "index.html")
+
+@app.route("/chat", methods=["POST"])
+def chat_with_ghost():
+    data = request.get_json()
+    user_input = data.get("message", "")
+
+    if not user_input:
+        return jsonify({"reply": "👻 Ghost: I didn’t catch that."})
+
+    response = chat.send_message(user_input)
+    return jsonify({"reply": response.text})
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
