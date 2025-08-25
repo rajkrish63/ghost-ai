@@ -7,8 +7,7 @@ app = Flask(__name__, static_folder=".", static_url_path="")
 CORS(app)  # Allow frontend JS to call backend
 
 # 🔑 Configure Gemini (replace with your actual API key or set via Render ENV VAR)
-API_KEY = os.environ.get("AIzaSyBXyMLeOdakUY_epOBJd4Bc1eyEpKQwHYo")
-genai.configure(api_key=API_KEY)
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Initialize Gemini chat model
 model = genai.GenerativeModel("gemini-2.0-flash")
@@ -38,3 +37,4 @@ if __name__ == "__main__":
     # ✅ Render requires host=0.0.0.0 and PORT from environment
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+
